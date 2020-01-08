@@ -1,0 +1,4 @@
+nba_env/
+.vscode
+*/data/*.csv
+.DS_Store
