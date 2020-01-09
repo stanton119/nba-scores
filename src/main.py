@@ -162,7 +162,7 @@ def save_plot_to_html(score_plot):
 
 def convert_plot_to_html(score_plot):
     bokeh_score_plot = hv.render(score_plot)
-    return file_html(bokeh_score_plot, CDN, "my plot")
+    return file_html(bokeh_score_plot, CDN, "Basketball Reference Plot")
 
 
 # %% Plot changes

@@ -1,6 +1,6 @@
 # NBA Match Analysis
 ## Description
-Python webservice designed to run on Google Cloud AppEngine service.
+Python webservice designed to run on Google Cloud AppEngine service.  
 Scrapes match information from basketball-reference.com. Extracts the scores, pre-processes the data and visualises against time.  
 
 ## Install
