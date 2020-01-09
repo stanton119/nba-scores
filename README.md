@@ -1,10 +1,7 @@
 # NBA Match Analysis
 ## Description
-Scrape match information from basketball-reference.com. Extracts the scores and visualises against time.  
-
-Written in python.
-
 Python webservice designed to run on Google Cloud AppEngine service.
+Scrapes match information from basketball-reference.com. Extracts the scores, pre-processes the data and visualises against time.  
 
 ## Install
 ```
@@ -29,10 +26,6 @@ To trigger call the `nba_score_plot` end point with a game ID from basketball-re
 To update codebase:
 ```
 gcloud app deploy
-```
-To change cron jobs:
-```
-gcloud app deploy cron.yaml
 ```
 
 ## Screenshot
