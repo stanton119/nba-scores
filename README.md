@@ -4,7 +4,7 @@ Scrape match information from basketball-reference.com. Extracts the scores and 
 
 Written in python.
 
-<!-- Python webservice designed to run on Google Cloud AppEngine service. -->
+Python webservice designed to run on Google Cloud AppEngine service.
 
 ## Install
 ```
@@ -19,12 +19,11 @@ pip install -r debug/debug_requirements.txt
 ```
 
 ## Usage
-<!-- Run `src/main.py` to start the flask webservice.
-To trigger:
+Run `src/main.py` to start the flask webservice.
+To trigger call the `nba_score_plot` end point with a game ID from basketball-reference.com e.g.:
 ```
-127.0.0.1:8080/morning_alerts
+127.0.0.1:5000/nba_score_plot?game_id=202001080CHO
 ```
-All REST end points are defined within `main.py` -->
 
 ## App engine update
 To update codebase:
@@ -39,5 +38,10 @@ gcloud app deploy cron.yaml
 ## Screenshot
 ![](screenshot.png)
 
+## Example HTML Output
+[ExampleMatch.html](ExampleMatch.html)
+
 # Todo
-Add location information from browser to automatically pre-populate the form with local weather information.
+* Change plot
+* Create better html file template
+* Put live on the cloud
