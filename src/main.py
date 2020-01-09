@@ -1,34 +1,24 @@
 # %%
+import re
+import datetime
+import requests
+
 import pandas as pd
 import numpy as np
 import hvplot.pandas
-
-import re
-import datetime
-
-import requests
-from bs4 import BeautifulSoup
-
-
-# %% Scrape match information
-example_url = "https://www.basketball-reference.com/boxscores/pbp/202001040BRK.html"
-
-# Replace with the correct URL
-# url = (
-#     f"https://huxley.apphb.com/departures/{station_from}"
-#     + f"/to/{station_to}/5?accessToken={HUXLEY_TOKEN}"
-# )
-url = example_url
-
-url = "https://www.basketball-reference.com/boxscores/pbp/202001040DAL.html"
+from bokeh.models import HoverTool
+from bokeh.resources import CDN
+from bokeh.embed import file_html
+import holoviews as hv
+from flask import Flask, request
 
 # %% Request page
 def score_table_from_url(url):
     # Fetch URL contents
     response = requests.get(url)
+    return response.content
     # if ~response.ok:
     #     return None
-    return response.content
     # page_data = BeautifulSoup(response.content, "html.parser")
     # return page_data.find(name="table", attrs={"id": "pbp"})
 
@@ -39,7 +29,7 @@ def dataframe_from_table_html(html_str):
     return score_table["1st Q"]
 
 
-# %% Clean table
+# %% Cleaning functions
 def remove_unnamed_columns(score_df) -> pd.DataFrame:
     p = re.compile(r"Unnamed\S*")
     del_cols = list(filter(p.match, score_df.columns))
@@ -144,31 +134,36 @@ def clean_table(score_df) -> pd.DataFrame:
     return score_df
 
 
-# %%
+# %% Wrapping functions
 def dataframe_from_url(url) -> pd.DataFrame:
     table_html = score_table_from_url(url)
     score_df = dataframe_from_table_html(table_html)
     if score_df is None:
         return None
-    score_df = clean_table(score_df)
     return score_df
 
 
-# %% Run for a match
-from bokeh.models import HoverTool
-from bokeh.resources import INLINE
+def create_plot(score_df):
+    # %% create plot
+    score_plot = score_df.hvplot(
+        y=["HomeScore", "AwayScore"], hover_cols=list(score_df.columns)
+    )
 
-# score_df = dataframe_from_url(url)
+    hover = HoverTool(
+        tooltips=[(col, "@" + col) for col in ["HomeScore", "AwayScore"]]
+    )  # score_df.columns])
+    score_plot = score_plot.opts(tools=[hover])
+    return score_plot
 
-# %% create plot
-plot1 = score_df.hvplot(y=["HomeScore", "AwayScore"])#, hover_cols=list(score_df.columns))
-hover = HoverTool(
-    tooltips=[(col, '@'+col) for col in ["HomeScore", "AwayScore"]]
-)  # score_df.columns])
-hover.tooltips
-plot1 = plot1.opts(tools=[hover])
-plot1
-# hvplot.save(plot1, "ExampleMatch.html", resources=INLINE)
+
+def save_plot_to_html(score_plot):
+    hvplot.save(score_plot, "MatchScorePlot.html", resources=INLINE)
+
+
+def convert_plot_to_html(score_plot):
+    bokeh_score_plot = hv.render(score_plot)
+    return file_html(bokeh_score_plot, CDN, "my plot")
+
 
 # %% Plot changes
 # Add lines for quarter starts
@@ -177,29 +172,21 @@ plot1
 # minor tick for minor
 # add grid
 # add hovers
+# add larger axis limits
 
-# %%
-hvplot.save(plot1, "ExampleMatch.png")
+# %% Setup as webservice
+app = Flask(__name__)
 
-# %%
+@app.route("/nba_score_plot", methods=["GET"])
+def generate_plot():
+    game_id = request.args.get("game_id")
+    url = f"https://www.basketball-reference.com/boxscores/pbp/{game_id}.html"
+    score_df = dataframe_from_url(url)
+    score_df = clean_table(score_df)
+    score_plot = create_plot(score_df)
+    score_plot_html = convert_plot_to_html(score_plot)
+    return score_plot_html, 200
 
-score_df[:116].tail()
-score_df.head()
+if __name__ == "__main__":
+    app.run(port=5000)
 
-
-# %%
-table_html = score_table_from_url(url)
-score_df_orig = dataframe_from_table_html(table_html)
-
-# %%
-score_df = remove_unnamed_columns(score_df_orig)
-score_df = add_quarter_column(score_df)
-score_df_prec = remove_nonscore_rows(score_df)
-
-# %%
-
-# %%
-score_df = normalise_time_remaining(score_df_prec)
-score_df
-
-# %%
