@@ -38,3 +38,4 @@ gcloud app deploy
 * Change plot
 * Create better html file template
 * Put live on the cloud
+* Create empty form when no game ID submitted

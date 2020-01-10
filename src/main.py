@@ -157,13 +157,20 @@ def create_plot(score_df):
 
 
 def save_plot_to_html(score_plot):
-    hvplot.save(score_plot, "MatchScorePlot.html", resources=INLINE)
+    hvplot.save(score_plot, "MatchScorePlot.html") #, resources=INLINE)
 
 
 def convert_plot_to_html(score_plot):
     bokeh_score_plot = hv.render(score_plot)
     return file_html(bokeh_score_plot, CDN, "Basketball Reference Plot")
 
+
+def generate_plot(game_id):
+    url = f"https://www.basketball-reference.com/boxscores/pbp/{game_id}.html"
+    score_df = dataframe_from_url(url)
+    score_df = clean_table(score_df)
+    score_plot = create_plot(score_df)
+    return score_plot
 
 # %% Plot changes
 # Add lines for quarter starts
@@ -178,12 +185,9 @@ def convert_plot_to_html(score_plot):
 app = Flask(__name__)
 
 @app.route("/nba_score_plot", methods=["GET"])
-def generate_plot():
+def process_request():
     game_id = request.args.get("game_id")
-    url = f"https://www.basketball-reference.com/boxscores/pbp/{game_id}.html"
-    score_df = dataframe_from_url(url)
-    score_df = clean_table(score_df)
-    score_plot = create_plot(score_df)
+    score_plot = generate_plot(game_id)
     score_plot_html = convert_plot_to_html(score_plot)
     return score_plot_html, 200
 
