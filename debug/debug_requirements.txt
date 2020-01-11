@@ -1,3 +1,4 @@
 notebook
 black
 pylint
+memory_profiler

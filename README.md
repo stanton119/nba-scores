@@ -22,7 +22,8 @@ To trigger call the `nba_score_plot` end point with a game ID from basketball-re
 127.0.0.1:5000/nba_score_plot?game_id=202001080CHO
 ```
 
-## App engine update
+## Google App engine Deployment
+After creating an app on Google Cloud Platform etc.  
 To update codebase:
 ```
 gcloud app deploy
@@ -33,6 +34,9 @@ gcloud app deploy
 
 ## Example HTML Output
 [ExampleMatch.html](ExampleMatch.html)
+
+## Memory usage
+See `debug/profile_memory.py` for details on memory usages. Typical usage for the plotting functions is 160MB.  
 
 # Todo
 * Change plot

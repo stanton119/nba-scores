@@ -3,8 +3,12 @@
 # %autoreload 2
 
 # %%
+import os 
 import sys
-sys.path.append('src')
+dir_path = os.path.dirname(os.path.realpath(__file__))
+base_dir, cur_dir = os.path.split(dir_path)
+sys.path.append(os.path.join(base_dir, 'src'))
+
 import main
 
 # %% Scrape match information
