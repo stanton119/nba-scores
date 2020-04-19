@@ -17,10 +17,6 @@ def score_table_from_url(url):
     # Fetch URL contents
     response = requests.get(url)
     return response.content
-    # if ~response.ok:
-    #     return None
-    # page_data = BeautifulSoup(response.content, "html.parser")
-    # return page_data.find(name="table", attrs={"id": "pbp"})
 
 
 # %% Create dataframe
@@ -152,12 +148,13 @@ def create_plot(score_df):
     hover = HoverTool(
         tooltips=[(col, "@" + col) for col in ["HomeScore", "AwayScore"]]
     )  # score_df.columns])
-    score_plot = score_plot.opts(tools=[hover])
+
+    score_plot = score_plot.opts(tools=[hover], show_grid=True)
     return score_plot
 
 
 def save_plot_to_html(score_plot):
-    hvplot.save(score_plot, "MatchScorePlot.html") #, resources=INLINE)
+    hvplot.save(score_plot, "MatchScorePlot.html")  # , resources=INLINE)
 
 
 def convert_plot_to_html(score_plot):
@@ -172,6 +169,7 @@ def generate_plot(game_id):
     score_plot = create_plot(score_df)
     return score_plot
 
+
 # %% Plot changes
 # Add lines for quarter starts
 # Change x-axis to min
@@ -181,8 +179,10 @@ def generate_plot(game_id):
 # add hovers
 # add larger axis limits
 
+
 # %% Setup as webservice
 app = Flask(__name__)
+
 
 @app.route("/nba_score_plot", methods=["GET"])
 def process_request():
@@ -191,6 +191,6 @@ def process_request():
     score_plot_html = convert_plot_to_html(score_plot)
     return score_plot_html, 200
 
+
 if __name__ == "__main__":
     app.run(port=5000)
-
